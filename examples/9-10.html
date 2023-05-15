@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="x-ua-compatible IE=edge"/> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr. Weusijana's WebXR API Testing Website</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.misc.min.js"></script>
+    <script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+  </head>
+  <body>
+    <a-scene physics="debug: false">
+      <!-- Asset Management System-->
+      <a-assets>
+        <a-asset-item
+          id="dragon"
+          src="./assets/dragon/scene.gltf"
+        ></a-asset-item>
+        <a-asset-item id="city" src="./assets/city/scene.gltf"></a-asset-item>
+        <a-mixin
+          id="controller"
+          physics-collider
+          static-body="shape: sphere; sphereRadius: 0.02"
+          super-hands="
+            colliderEvent: collisions;
+            colliderEventProperty: els;
+            colliderEndEvent: collisions;
+            colliderEndEventProperty: clearedEls
+          "
+          collision-filter="
+            group: hands;
+            collidesWith: blue;
+            collisionForces: false
+          "
+        >
+        </a-mixin>
+      </a-assets>
+      <!-- <a-camera position="0 0.3 0"></a-camera> -->
+      <a-camera position="0 1 -0.8"></a-camera>
+      <!-- <a-plane
+        material="color: gray"
+        width="25"
+        height="25"
+        rotation="-90 0 0"
+        position="0 0.2 0"
+        static-body
+      ></a-plane> -->
+      <a-sphere
+        static-body
+        position="-5 12 -6"
+        material="color: yellow"
+        radius="2"
+      ></a-sphere>
+      <a-box
+        dynamic-body
+        grabbale
+        position="0.5 50 -0.5"
+        material="color: blue"
+        width="0.5"
+        height="0.5"
+        depth="0.5"
+      ></a-box>
+      <a-entity oculus-touch-controls="hand: left" mixin="controller">
+      </a-entity>
+      <a-entity oculus-touch-controls="hand: right" mixin="controller">
+      </a-entity>
+      <a-mixin
+        id="cube"
+        dynamic-body
+        grabbable
+        geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+      >
+      </a-mixin>
+      <a-entity
+        mixin="cube"
+        position="0 1 -1"
+        material="color: blue"
+        sleepy
+        collision-filter="group: blue; collidesWith: default, hands"
+      >
+      </a-entity>
+      <!-- <a-plane
+        material="color: gray"
+        width="25"
+        height="25"
+        rotation="-90 0 0"
+        position="0 0.2 0"
+        static-body
+        collision-filter="collidesWith: blue"
+        physics-collider
+      ></a-plane> -->
+      <a-sky color="#87CEEB"></a-sky>
+      <!--City GLTF model-->
+      <a-entity
+        gltf-model="#city"
+        rotation="0 -90 0"
+        scale="0.0005 0.0005 0.0005"
+        position=".07 1 -.5"
+        static-body
+      ></a-entity>
+      <!--Dragon GLTF model-->
+      <a-entity
+        gltf-model="#dragon"
+        scale="1 1 1"
+        rotation="0 270 0"
+        position="0.5 1.5 -0.7"
+        animation-mixer
+        dynamic-body
+        grabbable
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>
