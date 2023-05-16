@@ -56,8 +56,7 @@ key.pem
 # Eclipse
 .project
 .jsdtscope
-org.eclipse.wst.jsdt.ui.superType.container
-org.eclipse.wst.jsdt.ui.superType.name
+org.eclipse.*
 
 # Glitch
 .env
