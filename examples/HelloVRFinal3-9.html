@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Hello World VR</title>
-    <meta name="description" content="First example, basic hello world for VR using A-frame WebXR." />
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no"
     />
+    <title>Hello World VR and Chapter 9</title>
+    <meta name="description" content="First example, basic hello world for VR using A-frame WebXR." />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="gray-translucent" />
@@ -24,10 +24,17 @@
     <!-- A-frame Extras provides movement controls in VR and many other useful things -->
     <!-- <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script> -->
     <!-- c-frame/aframe-extras seems to be a replacement for donmccurdy/aframe-extras -->
-    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@6.1.1/dist/aframe-extras.js"></script>
 
     <!-- n5ro animation-mixer.js now seems to be inside c-frame/aframe-extras loaded above-->
     <!-- <script src="https://github.com/n5ro/aframe-extras/blob/master/src/loaders/animation-mixer.js"></script> -->
+
+    <!-- Code from Chapter 9 -->
+    <!-- <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.1.0/dist/aframe-physics-system.js"></script>
+    <script src="https://unpkg.com/super-hands@3.0.3/dist/super-hands.js"></script>
+    <!-- <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.js"></script>
 
     <script type="text/javascript">
       // Sound effect for objects
@@ -133,7 +140,6 @@
           id="spin-y"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear; dir: alternate"
         ></a-mixin>
-
         <a-mixin
           id="spin-x"
           animation="property: rotation; to: 360 0 0; loop: true; dur: 15000; easing: linear"
@@ -142,21 +148,59 @@
           id="spin-z"
           animation="property: rotation; to: 0 0 360; loop: true; dur: 15000; easing: linear"
         ></a-mixin>
-
         <!-- Music box texture applied to cube  -->
         <img crossorigin="anonymous" id="musicbox" src="assets/img/music.png" />
-
         <!-- Cactus models -3D GltF models -->
         <a-asset-item id="cactusShort" src="assets/gltf/cactusShort.glb"></a-asset-item>
         <a-asset-item id="cactusTall" src="assets/gltf/cactusTall.glb"></a-asset-item>
-
         <!-- Tree models -3D GltF models -->
         <a-asset-item id="Tree1" src="assets/gltf/NormalTree_1.glb"></a-asset-item>
         <a-asset-item id="Tree2" src="assets/gltf/NormalTree_2.glb"></a-asset-item>
+        <!-- From Chapter 9 -->
+        <a-mixin
+          id="controller"
+          physics-collider
+          static-body="shape: sphere; sphereRadius: 0.02"
+          super-hands="colliderEvent: collisions;
+                            colliderEventProperty: els;
+                            colliderEndEvent: collisions;
+                            colliderEndEventProperty: clearedEls"
+          collision-filter="group: hands;
+                                    collidesWith: blue;
+                                    collisionForces: false"
+        >
+        </a-mixin>
+        <a-mixin id="cube" dynamic-body grabbable geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5">
+        </a-mixin>
       </a-assets>
+      <a-camera position="0 0.3 0"></a-camera>
+      <a-entity oculus-touch-controls="hand: left" model:true mixin="controller"> </a-entity>
+      <a-entity oculus-touch-controls="hand: right" model:true mixin="controller"> </a-entity>
+      <a-plane
+        material="color: gray"
+        width="25"
+        height="25"
+        rotation="-90 0 0"
+        position="0 0 0"
+        static-body
+        collision-filter="collidesWith: blue"
+        physics-collider
+      ></a-plane>
+      <a-sphere static-body position="-5 12 -6" material="color: yellow" radius="2"></a-sphere>
+      <a-entity
+        mixin="cube"
+        position="0.5 10 -0.5"
+        material="color: blue"
+        sleepy
+        collision-filter="group: blue; collidesWith: default, red, hands"
+      >
+      </a-entity>
+      <!-- <a-box dynamic-body grabbale position="0.5 50 -0.5" material="color: blue"
+                width="0.5" height="0.5" depth="0.5"
+                collision-filter="group: blue; collidesWith: default, hands">
+        </a-box> -->
 
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse"></a-entity>
-
       <!-- Basic movement in VR with lowpoly hands and raycaster laser pointer for selection -->
       <a-entity id="cameraRig" movement-controls>
         <!-- camera  -also added an animation to fly in for dramatic visual effect at start only -->
@@ -183,9 +227,7 @@
           visible="true"
         ></a-entity>
       </a-entity>
-
       <!-- 3D primitive objects inside our scene -->
-
       <!-- A-frame layout component creates a circle around a position with a radius on the x-z plane (notice no positions are defined on the objects within the layout </entity>) -->
       <a-entity
         layout="type: circle; radius: 3.5; plane: xz;"
@@ -271,10 +313,8 @@
           shadow="receive: false"
           onclick="disappear('torusKnot');"
         ></a-entity>
-
         <!-- This is the close block for layout -->
       </a-entity>
-
       <a-entity
         id="cube"
         class="clickable"
@@ -306,13 +346,11 @@
         onclick="reappear();"
         click-listener
       ></a-entity>
-
       <!-- A light in the scene with shadow camera casting  -->
       <a-entity
         light="castShadow: true; shadowCameraVisible: false; shadowCameraTop: 10; shadowCameraBottom: -10; shadowCameraLeft: -10; shadowCameraRight: 10;  shadowCameraFar: 20"
         position="5.0091 13.0395 4.96481"
       ></a-entity>
-
       <!-- Our Environment  -->
       <a-entity
         id="parkland"
@@ -321,7 +359,6 @@
         active="false"
         visible="false"
       ></a-entity>
-
       <!-- Desert -Arizona like environment -->
       <a-entity
         id="desertland"
@@ -330,7 +367,6 @@
         active="true"
         visible="true"
       ></a-entity>
-
       <!-- Place a couple of simple cactus models to enhance the scene -->
       <a-entity
         id="Cactus1"
@@ -346,7 +382,6 @@
         scale="2 2 1"
         shadow="receive: false"
       ></a-entity>
-
       <!-- Place a couple of simple tree models to enhance the scene -->
       <a-entity
         id="ParkTree1"
