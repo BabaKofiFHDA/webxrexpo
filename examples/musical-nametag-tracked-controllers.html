@@ -46,6 +46,7 @@
     <script src="/js/spawn-in-circle.component.js"></script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.js"></script>
     <script>
       // Temporary workaround for template declaration; see issue 167
       NAF.schemas.getComponentsOriginal = NAF.schemas.getComponents;
@@ -290,7 +291,9 @@
       sortObjects: true;
       physicallyCorrectLights: true;"
       shadow="type: pcfsoft; autoUpdate: false;"
-      raycaster="objects: .clickable, .cube, .cylinder, .sphere, .cone, .dodecahedron, .icosahedron, .octahedron, .tetrahedron, .torus, .torusKnot"
+      raycaster="objects: .clickable, .cube, .cylinder, .sphere, .cone,
+                 .dodecahedron, .icosahedron, .octahedron, .tetrahedron,
+                 .torus, .torusKnot"
     >
       <a-assets>
         <!-- From HelloVRFinal3 -->
@@ -404,6 +407,9 @@
           networked-hand-controls="hand:left; color:purple;"
           networked="template:#left-hand-default-template"
           visible="true"
+          static-body="shape: sphere; sphereRadius: 0.02;"
+          sphere-collider="objects: .movable;"
+          grab
         ></a-entity>
         <!-- Networked Right Controller Hand -->
         <a-entity
@@ -414,6 +420,9 @@
           networked-hand-controls="hand:right;handModelStyle:controller;"
           networked="template:#right-hand-default-template"
           visible="true"
+          static-body="shape: sphere; sphereRadius: 0.02;"
+          sphere-collider="objects: .movable;"
+          grab
         ></a-entity>
       </a-entity>
       <!-- 3D primitive objects inside our scene -->
@@ -591,6 +600,56 @@
         shadow="receive: false"
         visible="false"
       ></a-entity>
+
+      <!-- Player -->
+      <!--       <a-entity camera look-controls></a-entity> -->
+      <!--       <a-entity
+        static-body="shape: sphere; sphereRadius: 0.02;"
+        hand-controls="hand: left"
+        sphere-collider="objects: .cube;"
+        grab
+      ></a-entity>
+      <a-entity
+        static-body="shape: sphere; sphereRadius: 0.02;"
+        hand-controls="hand: right"
+        sphere-collider="objects: .cube;"
+        grab
+      ></a-entity>
+ -->
+      <a-box
+        class="movable"
+        dynamic-body
+        position="0 5 -1"
+        width="0.5"
+        height="0.5"
+        depth="0.5"
+        color="red"
+      ></a-box>
+      <a-sphere
+        class="movable"
+        dynamic-body
+        position="-1 5 -1"
+        radius="0.5"
+        color="green"
+      ></a-sphere>
+      <a-box
+        class="movable"
+        dynamic-body
+        position="1 5 -1"
+        width="0.5"
+        height="0.5"
+        depth="0.5"
+        color="blue"
+      ></a-box>
+
+      <!-- Terrain -->
+      <a-grid
+        static-body
+        shadow="receive: false"
+        visible="false"
+        width="100000"
+        depth="100000"
+      ></a-grid>
     </a-scene>
   </body>
 </html>
