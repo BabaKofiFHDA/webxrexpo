@@ -2,15 +2,23 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Musical Networked-Aframe plus Nametags with Tracked Controllers Example</title>
-    <meta name="description" content="Musical VR using Networked A-frame WebXR." />
+    <title>
+      Musical Networked-Aframe plus Nametags with Tracked Controllers Example
+    </title>
+    <meta
+      name="description"
+      content="Musical VR using Networked A-frame WebXR."
+    />
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no"
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="gray-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="gray-translucent"
+    />
 
     <!-- A-frame JavaScript version component entity system -->
     <script src="https://aframe.io/releases/1.4.1/aframe.js"></script>
@@ -36,27 +44,27 @@
 
     <script type="text/javascript">
       // Sound effect for objects
-      var sparkle = new Audio('assets/mp3/magical_sparkle.mp3');
-      var swoosh = new Audio('assets/wav/swoosh.wav');
+      var sparkle = new Audio("assets/mp3/magical_sparkle.mp3");
+      var swoosh = new Audio("assets/wav/swoosh.wav");
 
       var envToggle = true;
 
       // Click listener for do on click
-      AFRAME.registerComponent('click-listener', {
+      AFRAME.registerComponent("click-listener", {
         init: function () {
-          this.el.addEventListener('click', function (evt) {
+          this.el.addEventListener("click", function (evt) {
             // remove clicked object from view
             //this.setAttribute('visible', false);
           });
-        }
+        },
       });
 
       // Handles activating and toggle on-off audio control for browser
-      AFRAME.registerComponent('audiohandler', {
+      AFRAME.registerComponent("audiohandler", {
         init: function () {
           let playing = false;
-          let audio = document.querySelector('#playAudio');
-          this.el.addEventListener('click', () => {
+          let audio = document.querySelector("#playAudio");
+          this.el.addEventListener("click", () => {
             if (!playing) {
               audio.play();
             } else {
@@ -65,7 +73,7 @@
             }
             playing = !playing;
           });
-        }
+        },
       });
 
       function playSound() {
@@ -75,49 +83,63 @@
 
       // Make our selected object invisible by name and play a sound
       function disappear(objectName) {
-        document.getElementById(objectName).setAttribute('visible', false);
+        document.getElementById(objectName).setAttribute("visible", false);
         sparkle.play();
       }
 
       // Make all our spinning objects visible again (even if they are still visible), when cylinder is selected, and play a sound
       function reappear() {
-        document.getElementById('cone').setAttribute('visible', true);
-        document.getElementById('dodecahedron').setAttribute('visible', true);
-        document.getElementById('icosahedron').setAttribute('visible', true);
-        document.getElementById('octahedron').setAttribute('visible', true);
-        document.getElementById('tetrahedron').setAttribute('visible', true);
-        document.getElementById('torus').setAttribute('visible', true);
-        document.getElementById('torusKnot').setAttribute('visible', true);
+        document.getElementById("cone").setAttribute("visible", true);
+        document.getElementById("dodecahedron").setAttribute("visible", true);
+        document.getElementById("icosahedron").setAttribute("visible", true);
+        document.getElementById("octahedron").setAttribute("visible", true);
+        document.getElementById("tetrahedron").setAttribute("visible", true);
+        document.getElementById("torus").setAttribute("visible", true);
+        document.getElementById("torusKnot").setAttribute("visible", true);
         sparkle.play();
       }
 
       // Toggle our environment from desertland to parkland, when sphere is selected
       function ChgEnv() {
-        console.log('ChgEnv this:', this);
-        if (envToggle !== false) {
-          document.getElementById('desertland').setAttribute('active', false);
-          document.getElementById('desertland').setAttribute('visible', false);
-          document.getElementById('parkland').setAttribute('active', true);
-          document.getElementById('parkland').setAttribute('visible', true);
-          document.getElementById('Cactus1').setAttribute('visible', false);
-          document.getElementById('Cactus2').setAttribute('visible', false);
-          document.getElementById('ParkTree1').setAttribute('visible', true);
-          document.getElementById('ParkTree2').setAttribute('visible', true);
+        console.log("ChgEnv this:", this);
+        let desertlandEntity = document.getElementById("desertland");
+        if (desertlandEntity) {
+          console.log("desertlandEntity:", desertlandEntity);
         } else {
-          document.getElementById('desertland').setAttribute('active', true);
-          document.getElementById('desertland').setAttribute('visible', true);
-          document.getElementById('parkland').setAttribute('active', false);
-          document.getElementById('parkland').setAttribute('visible', false);
-          document.getElementById('Cactus1').setAttribute('visible', true);
-          document.getElementById('Cactus2').setAttribute('visible', true);
-          document.getElementById('ParkTree1').setAttribute('visible', false);
-          document.getElementById('ParkTree2').setAttribute('visible', false);
+          console.log("desertlandEntity is unknown");
+        }
+        if (envToggle !== false) {
+          document.getElementById("desertland").setAttribute("active", false);
+          document.getElementById("desertland").setAttribute("visible", false);
+          document.getElementById("parkland").setAttribute("active", true);
+          document.getElementById("parkland").setAttribute("visible", true);
+          document.getElementById("Cactus1").setAttribute("visible", false);
+          document.getElementById("Cactus2").setAttribute("visible", false);
+          document.getElementById("ParkTree1").setAttribute("visible", true);
+          document.getElementById("ParkTree2").setAttribute("visible", true);
+        } else {
+          document.getElementById("desertland").setAttribute("active", true);
+          document.getElementById("desertland").setAttribute("visible", true);
+          document.getElementById("parkland").setAttribute("active", false);
+          document.getElementById("parkland").setAttribute("visible", false);
+          document.getElementById("Cactus1").setAttribute("visible", true);
+          document.getElementById("Cactus2").setAttribute("visible", true);
+          document.getElementById("ParkTree1").setAttribute("visible", false);
+          document.getElementById("ParkTree2").setAttribute("visible", false);
         }
 
         swoosh.play();
         envToggle = !envToggle;
-        console.log('envToggle:', envToggle);
+        console.log("envToggle:", envToggle);
       }
+
+      // Handles hiding environments that are not the default environment
+      AFRAME.registerComponent("hiddenenvironment", {
+        init: function () {
+          console.log("hiddenenvironment's this.el:", this.el);
+          ChgEnv();
+        },
+      });
     </script>
   </head>
   <body>
@@ -129,9 +151,8 @@
 
     <!-- Used to create a scene, like on the stage of a play, but in 360 °  -->
     <a-scene
-      shadow="type: pcfsoft"
+      shadow="type: pcfsoft; autoUpdate: false;"
       renderer="antialias: true; highRefreshRate: true;"
-      shadow="autoUpdate: false"
       raycaster="objects: .clickable, .cube, .cylinder, .sphere, .cone, .dodecahedron, .icosahedron, .octahedron, .tetrahedron, .torus, .torusKnot"
     >
       <a-assets>
@@ -151,11 +172,23 @@
         <!-- Music box texture applied to cube  -->
         <img crossorigin="anonymous" id="musicbox" src="assets/img/music.png" />
         <!-- Cactus models -3D GltF models -->
-        <a-asset-item id="cactusShort" src="assets/gltf/cactusShort.glb"></a-asset-item>
-        <a-asset-item id="cactusTall" src="assets/gltf/cactusTall.glb"></a-asset-item>
+        <a-asset-item
+          id="cactusShort"
+          src="assets/gltf/cactusShort.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="cactusTall"
+          src="assets/gltf/cactusTall.glb"
+        ></a-asset-item>
         <!-- Tree models -3D GltF models -->
-        <a-asset-item id="Tree1" src="assets/gltf/NormalTree_1.glb"></a-asset-item>
-        <a-asset-item id="Tree2" src="assets/gltf/NormalTree_2.glb"></a-asset-item>
+        <a-asset-item
+          id="Tree1"
+          src="assets/gltf/NormalTree_1.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="Tree2"
+          src="assets/gltf/NormalTree_2.glb"
+        ></a-asset-item>
       </a-assets>
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse"></a-entity>
       <!-- Basic movement in VR with lowpoly hands and raycaster laser pointer for selection -->
@@ -313,16 +346,18 @@
         id="parkland"
         environment="preset: forest; dressingAmount: 250; dressingUniformScale: true; dressingColor: #248728; ground: hills; groundTexture: none; groundColor: #34711C; groundColor2: #319D06; grid: none; gridColor: #81F995; skyType: gradient; skyColor: #A4CFFA; horizonColor: #95C8FA; fog: .75"
         shadow="receive: true"
-        active="false"
-        visible="false"
+        active="true"
+        visible="true"
       ></a-entity>
       <!-- Desert -Arizona like environment -->
       <a-entity
         id="desertland"
-        environment="preset: yavapai; dressingAmount: 150; skyType: gradient; skyColor: #4BA3F8; horizonColor: #96C8F8; fog: .75; flatShading: false"
+        environment="preset: yavapai; dressingAmount: 150; skyType: gradient; skyColor: #4BA3F8; 
+                     horizonColor: #96C8F8; fog: .75; flatShading: false"
         shadow="receive: true"
         active="false"
         visible="false"
+        hiddenenvironment
       ></a-entity>
       <!-- Place a couple of simple cactus models to enhance the scene -->
       <a-entity
@@ -358,8 +393,5 @@
         visible="false"
       ></a-entity>
     </a-scene>
-    <script type="text/javascript">
-    ChgEnv();
-    </script>
   </body>
 </html>
