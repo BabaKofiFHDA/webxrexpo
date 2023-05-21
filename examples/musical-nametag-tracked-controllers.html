@@ -93,6 +93,7 @@
 
       // Toggle our environment from desertland to parkland, when sphere is selected
       function ChgEnv() {
+        console.log('ChgEnv this:', this);
         if (envToggle !== false) {
           document.getElementById('desertland').setAttribute('active', false);
           document.getElementById('desertland').setAttribute('visible', false);
@@ -115,6 +116,7 @@
 
         swoosh.play();
         envToggle = !envToggle;
+        console.log('envToggle:', envToggle);
       }
     </script>
   </head>
@@ -138,7 +140,6 @@
           id="spin-y"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear; dir: alternate"
         ></a-mixin>
-
         <a-mixin
           id="spin-x"
           animation="property: rotation; to: 360 0 0; loop: true; dur: 15000; easing: linear"
@@ -147,21 +148,16 @@
           id="spin-z"
           animation="property: rotation; to: 0 0 360; loop: true; dur: 15000; easing: linear"
         ></a-mixin>
-
         <!-- Music box texture applied to cube  -->
         <img crossorigin="anonymous" id="musicbox" src="assets/img/music.png" />
-
         <!-- Cactus models -3D GltF models -->
         <a-asset-item id="cactusShort" src="assets/gltf/cactusShort.glb"></a-asset-item>
         <a-asset-item id="cactusTall" src="assets/gltf/cactusTall.glb"></a-asset-item>
-
         <!-- Tree models -3D GltF models -->
         <a-asset-item id="Tree1" src="assets/gltf/NormalTree_1.glb"></a-asset-item>
         <a-asset-item id="Tree2" src="assets/gltf/NormalTree_2.glb"></a-asset-item>
       </a-assets>
-
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse"></a-entity>
-
       <!-- Basic movement in VR with lowpoly hands and raycaster laser pointer for selection -->
       <a-entity id="cameraRig" movement-controls>
         <!-- camera  -also added an animation to fly in for dramatic visual effect at start only -->
@@ -188,9 +184,7 @@
           visible="true"
         ></a-entity>
       </a-entity>
-
       <!-- 3D primitive objects inside our scene -->
-
       <!-- A-frame layout component creates a circle around a position with a radius on the x-z plane (notice no positions are defined on the objects within the layout </entity>) -->
       <a-entity
         layout="type: circle; radius: 3.5; plane: xz;"
@@ -276,10 +270,8 @@
           shadow="receive: false"
           onclick="disappear('torusKnot');"
         ></a-entity>
-
         <!-- This is the close block for layout -->
       </a-entity>
-
       <a-entity
         id="cube"
         class="clickable"
@@ -311,13 +303,11 @@
         onclick="reappear();"
         click-listener
       ></a-entity>
-
       <!-- A light in the scene with shadow camera casting  -->
       <a-entity
         light="castShadow: true; shadowCameraVisible: false; shadowCameraTop: 10; shadowCameraBottom: -10; shadowCameraLeft: -10; shadowCameraRight: 10;  shadowCameraFar: 20"
         position="5.0091 13.0395 4.96481"
       ></a-entity>
-
       <!-- Our Environment  -->
       <a-entity
         id="parkland"
@@ -326,16 +316,14 @@
         active="false"
         visible="false"
       ></a-entity>
-
       <!-- Desert -Arizona like environment -->
       <a-entity
         id="desertland"
         environment="preset: yavapai; dressingAmount: 150; skyType: gradient; skyColor: #4BA3F8; horizonColor: #96C8F8; fog: .75; flatShading: false"
         shadow="receive: true"
-        active="true"
-        visible="true"
+        active="false"
+        visible="false"
       ></a-entity>
-
       <!-- Place a couple of simple cactus models to enhance the scene -->
       <a-entity
         id="Cactus1"
@@ -351,7 +339,6 @@
         scale="2 2 1"
         shadow="receive: false"
       ></a-entity>
-
       <!-- Place a couple of simple tree models to enhance the scene -->
       <a-entity
         id="ParkTree1"
@@ -371,5 +358,8 @@
         visible="false"
       ></a-entity>
     </a-scene>
+    <script type="text/javascript">
+    ChgEnv();
+    </script>
   </body>
 </html>
