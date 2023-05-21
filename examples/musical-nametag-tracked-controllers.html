@@ -247,19 +247,53 @@
     </script>
   </head>
   <body>
+    <!-- From HelloVRFinal3 -->
     <!-- Used for playing our musical tune  -->
     <audio id="playAudio" autoplay loop>
       <!-- If you replace music, make sure it's open source (no copyright), or you have digital rights to it. Credit creator.  -->
       <source src="assets/mp3/music.mp3" type="audio/mpeg" />
     </audio>
 
+    <!-- From nametag-tracked-controllers -->
+    <!-- This <button> and <input> will overlay on top of the A-Frame canvas--this style is all you need.
+         Note the onclick and oninput attributes; on every call, they will run .setAttribute() for the player-info
+         component's data. NAF will keep that property in sync, since 'name' and 'color' are declared in the schema
+         of the 'player-info' component
+    -->
+    <button
+      id="color-changer"
+      style="z-index: 100; bottom: 24px; left: 24px; position: fixed"
+      onclick="let newColor = window.ntExample.randomColor();
+             document.getElementById('player').setAttribute('player-info', 'color', newColor); 
+             document.querySelector('button').style.backgroundColor = newColor;
+             document.querySelector('button').style.color = newColor;
+    "
+    >
+      ■
+    </button>
+    <input
+      id="username-overlay"
+      style="z-index: 100; bottom: 24px; left: 48px; position: fixed"
+      oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)"
+    />
+
     <!-- Used to create a scene, like on the stage of a play, but in 360 °  -->
     <a-scene
+      networked-scene="
+        room: musicalnametaghandcontrollers;
+        debug: true;
+        adapter: wseasyrtc;
+    "
+      renderer="antialias: true;
+      highRefreshRate: true;
+      colorManagement: true;
+      sortObjects: true;
+      physicallyCorrectLights: true;"
       shadow="type: pcfsoft; autoUpdate: false;"
-      renderer="antialias: true; highRefreshRate: true;"
       raycaster="objects: .clickable, .cube, .cylinder, .sphere, .cone, .dodecahedron, .icosahedron, .octahedron, .tetrahedron, .torus, .torusKnot"
     >
       <a-assets>
+        <!-- From HelloVRFinal3 -->
         <!-- this is a mixin which provides for a looping spin on the y-axis -->
         <a-mixin
           id="spin-y"
@@ -293,26 +327,85 @@
           id="Tree2"
           src="assets/gltf/NormalTree_2.glb"
         ></a-asset-item>
+
+        <!-- From nametag-tracked-controllers -->
+        <template id="rig-template">
+          <a-entity></a-entity>
+        </template>
+
+        <template id="head-template">
+          <a-entity class="avatar" player-info>
+            <a-sphere class="head" scale="0.2 0.22 0.2" random-color></a-sphere>
+            <a-entity class="face" position="0 0.05 0">
+              <a-sphere
+                class="eye"
+                color="white"
+                position="0.06 0.05 -0.16"
+                scale="0.04 0.04 0.04"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="black"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+              <a-sphere
+                class="eye"
+                color="white"
+                position="-0.06 0.05 -0.16"
+                scale="0.04 0.04 0.04"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="black"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+            </a-entity>
+
+            <!-- here we add a text component for a nametag; the value will be updated by the player-info component -->
+            <a-text
+              class="nametag"
+              value="?"
+              rotation="0 180 0"
+              position=".25 -.35 0"
+              side="double"
+              scale=".5 .5 .5"
+            ></a-text>
+          </a-entity>
+        </template>
       </a-assets>
+
+      <a-entity light="type:ambient;intensity:0.9" position="0 2 0"></a-entity>
+
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse"></a-entity>
       <!-- Basic movement in VR with hands and raycaster laser pointer for selection -->
-      <a-entity id="cameraRig" movement-controls>
-        <!-- camera  -also added an animation to fly in for dramatic visual effect at start only -->
+      <a-entity
+        id="rig"
+        movement-controls="fly:true;"
+        spawn-in-circle="radius:10"
+        networked="template:#rig-template;"
+      >
         <a-entity
-          id="head"
-          camera="active: true"
+          id="player"
+          camera
           position="0 1.6 0"
-          look-controls="pointerLockEnabled: false"
-          animation="property: position; dur: 15000; from: 0 10 50; to: 0 1.6 0; easing: easeInOutSine; loop: false; direction: normal"
-        ></a-entity>
-        <!-- Left Controller Hand -->
+          look-controls
+          networked="template:#head-template;"
+          visible="false"
+        >
+        </a-entity>
+        <!-- here we add the user's local hands! These two entities are all that is needed. -->
+        <!-- Networked Left Controller Hand -->
         <a-entity
           id="leftHand"
           networked-hand-controls="hand:left; color:purple;"
           networked="template:#left-hand-default-template"
           visible="true"
         ></a-entity>
-        <!-- Right Controller Hand -->
+        <!-- Networked Right Controller Hand -->
         <a-entity
           id="rightHand"
           laser-controls
