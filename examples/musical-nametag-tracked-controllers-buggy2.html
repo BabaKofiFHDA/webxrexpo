@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>
       Musical Networked-Aframe plus Nametags with Tracked Controllers and
-      Persistent Sphere Example
+      Spawned Persistent Spheres Example
     </title>
     <meta
       name="description"
@@ -47,12 +47,20 @@
     <script src="/js/spawn-in-circle.component.js"></script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.js"></script>
-
-    <!-- From Persistent Sphere Example -->
+    <!-- From persistent-peer-to-peer -->
     <script src="/js/color-changer.component.js"></script>
+    <script src="/js/spawner-persistent.component.js"></script>
+    <script src="/js/persistent-p2p.component.js"></script>
+    <!--
+      The spawner-persistent and persistent-p2p components go together,
+      spawner-persistent is set on the player entity,
+      persistent-p2p on the a-scene entity.
+      The persistent-p2p component handle the logic of keeping the persistent entities peer to peer.
+      The spheres are kept in the room if there is at least one participant remaining in the room.
+    -->
+
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.js"></script>
     <script>
-      // Temporary workaround for template declaration; see issue 167
       // see issue https://github.com/networked-aframe/networked-aframe/issues/267
       NAF.schemas.getComponentsOriginal = NAF.schemas.getComponents;
       NAF.schemas.getComponents = (template) => {
@@ -277,7 +285,7 @@
          of the 'player-info' component
     -->
     <button
-      id="color-changer-button"
+      id="color-changer"
       style="z-index: 100; bottom: 24px; left: 24px; position: fixed"
       onclick="let newColor = window.ntExample.randomColor();
              document.getElementById('player').setAttribute('player-info', 'color', newColor); 
@@ -306,9 +314,11 @@
       sortObjects: true;
       physicallyCorrectLights: true;"
       shadow="type: pcfsoft; autoUpdate: false;"
+      cursor="rayOrigin: mouse"
       raycaster="objects: .clickable, .cube, .cylinder, .sphere, .cone,
                  .dodecahedron, .icosahedron, .octahedron, .tetrahedron,
                  .torus, .torusKnot"
+      persistent-p2p
     >
       <a-assets>
         <!-- From HelloVRFinal3 -->
@@ -347,14 +357,15 @@
         ></a-asset-item>
 
         <!-- Templates -->
-        <!-- From basic-persistent -->
+
+        <!-- From persistent-peer-to-peer -->
         <template id="sphere-template">
-          <a-sphere
-            class="movable"
+          <a-entity
+            class="clickable"
             geometry="primitive: sphere"
-            material="color: green"
+            material="color: white"
             color-changer
-          ></a-sphere>
+          ></a-entity>
         </template>
 
         <!-- From nametag-tracked-controllers -->
@@ -405,6 +416,7 @@
             ></a-text>
           </a-entity>
         </template>
+        <!-- /Templates -->
       </a-assets>
 
       <a-entity light="type:ambient;intensity:0.9" position="0 2 0"></a-entity>
@@ -421,10 +433,13 @@
           id="player"
           camera
           position="0 1.6 0"
-          look-controls
-          networked="template:#head-template;"
+          networked="template:#head-template;attachTemplateToLocal:false;"
           visible="false"
+          spawner-persistent="template:#sphere-template"
+          wasd-controls
+          look-controls
         >
+          <a-sphere class="head" visible="false" random-color></a-sphere>
         </a-entity>
         <!-- here we add the user's local hands! These two entities are all that is needed. -->
         <!-- Networked Left Controller Hand -->
@@ -642,16 +657,6 @@
         grab
       ></a-entity>
  -->
-
-      <!-- Terrain -->
-      <a-grid
-        static-body
-        shadow="receive: false"
-        visible="false"
-        width="100000"
-        depth="100000"
-      ></a-grid>
-
       <a-box
         class="movable"
         dynamic-body
@@ -667,17 +672,8 @@
         position="-1 5 -1"
         radius="0.5"
         color="green"
-        id="movable-sphere"
-        networked="template:#sphere-template;networkId:movable-sphere;persistent:true;owner:scene"
+        networked="template:#sphere-template;"
       ></a-sphere>
-      <!--
-        Specifying a owner that isn't a real participant is used so that the
-        participant joining the room won't send this entity because not the
-        current owner, otherwise the participant will send the default red
-        color to the other participants, overriding the color
-        defined by the current owner of the sphere in the room.
-      -->
-
       <a-box
         class="movable"
         dynamic-body
@@ -687,6 +683,29 @@
         depth="0.5"
         color="blue"
       ></a-box>
+
+      <!-- Terrain -->
+      <a-grid
+        static-body
+        shadow="receive: false"
+        visible="false"
+        width="100000"
+        depth="100000"
+      ></a-grid>
     </a-scene>
+
+    <div class="controls">
+      <p>
+        Press space to spawn a sphere that will persist even if you leave the
+        room at the condition there is a participant that stay in the room.
+      </p>
+    </div>
+
+    <script>
+      // Called by Networked-Aframe when connected to server
+      function onConnect() {
+        console.log("onConnect", new Date());
+      }
+    </script>
   </body>
 </html>
