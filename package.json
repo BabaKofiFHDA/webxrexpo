@@ -4,7 +4,7 @@
   "description": "Examples of networked-aframe",
   "main": "./server/easyrtc-server.js",
   "scripts": {
-    "prepare": "cp -r dist examples",
+    "prepare": "cp -r dist docs",
     "start": "node ./server/easyrtc-server.js"
   },
   "dependencies": {

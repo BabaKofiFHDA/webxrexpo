@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "development") {
 
   app.use(
     webpackMiddleware(webpack(config), {
-      publicPath: "/dist/"
+      publicPath: "./dist/"
     })
   );
 }
